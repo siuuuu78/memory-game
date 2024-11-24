@@ -132,6 +132,10 @@ const MemoryGame = () => {
         ))}
       </div>
 
+      <div>
+        <p className='text-center mt-10'>made by rayhan</p>
+      </div>
+
       {/* Win Message */}
       {isWon && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
