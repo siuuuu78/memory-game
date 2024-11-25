@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
-const CARD_PAIRS = [
-  { id: 1, emoji: '🌟' },
-  { id: 2, emoji: '🎈' },
-  { id: 3, emoji: '🎮' },
-  { id: 4, emoji: '🎨' },
-  { id: 5, emoji: '🎭' },
-  { id: 6, emoji: '🎪' },
-  { id: 7, emoji: '🎯' },
-  { id: 8, emoji: '🎲' },
-];
+// Difficulty levels with different emoji sets
+const DIFFICULTY_LEVELS = {
+  easy: {
+    pairs: 6,
+    emojis: ['🌟', '🎈', '🎮', '🎨', '🎭', '🎪']
+  },
+  medium: {
+    pairs: 8,
+    emojis: ['🌟', '🎈', '🎮', '🎨', '🎭', '🎪', '🎯', '🎲']
+  },
+  hard: {
+    pairs: 10,
+    emojis: ['🌟', '🎈', '🎮', '🎨', '🎭', '🎪', '🎯', '🎲', '🚀', '🍕']
+  }
+};
 
 const MemoryGame = () => {
+  const [difficulty, setDifficulty] = useState('easy');
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState([]);
@@ -20,13 +26,20 @@ const MemoryGame = () => {
 
   useEffect(() => {
     initializeGame();
-  }, []);
+  }, [difficulty]);
 
   const initializeGame = () => {
+    const currentLevel = DIFFICULTY_LEVELS[difficulty];
+    
     // Create pairs of cards and shuffle them
-    const shuffledCards = [...CARD_PAIRS, ...CARD_PAIRS]
+    const shuffledCards = [...currentLevel.emojis, ...currentLevel.emojis]
       .sort(() => Math.random() - 0.5)
-      .map((card, index) => ({ ...card, uniqueId: index }));
+      .map((emoji, index) => ({ 
+        id: emoji, 
+        emoji, 
+        uniqueId: index 
+      }));
+    
     setCards(shuffledCards);
     setFlippedCards([]);
     setMatchedPairs([]);
@@ -35,10 +48,8 @@ const MemoryGame = () => {
   };
 
   const handleCardClick = (clickedCard) => {
-    // Prevent clicking if already two cards are flipped or card is matched
     if (flippedCards.length === 2 || matchedPairs.includes(clickedCard.id)) return;
     
-    // Prevent clicking the same card twice
     if (flippedCards.length === 1 && flippedCards[0].uniqueId === clickedCard.uniqueId) return;
 
     const newFlippedCards = [...flippedCards, clickedCard];
@@ -48,16 +59,14 @@ const MemoryGame = () => {
       setMoves(moves + 1);
       
       if (newFlippedCards[0].id === newFlippedCards[1].id) {
-        // Match found
         setMatchedPairs([...matchedPairs, clickedCard.id]);
         setFlippedCards([]);
         
-        // Check if all pairs are matched
-        if (matchedPairs.length + 1 === CARD_PAIRS.length) {
+        const currentLevel = DIFFICULTY_LEVELS[difficulty];
+        if (matchedPairs.length + 1 === currentLevel.pairs) {
           setIsWon(true);
         }
       } else {
-        // No match - flip cards back after delay
         setTimeout(() => {
           setFlippedCards([]);
         }, 1000);
@@ -70,11 +79,31 @@ const MemoryGame = () => {
            matchedPairs.includes(card.id);
   };
 
+  const gridColumns = {
+    easy: 'grid-cols-3',
+    medium: 'grid-cols-4',
+    hard: 'grid-cols-5'
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-4">Memory Game</h1>
+        
         <div className="flex justify-center gap-4 mb-4">
+          {/* Difficulty Selector */}
+          <select 
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="px-4 py-2 border rounded"
+          >
+            {Object.keys(DIFFICULTY_LEVELS).map(level => (
+              <option key={level} value={level}>
+                {level.charAt(0).toUpperCase() + level.slice(1)}
+              </option>
+            ))}
+          </select>
+
           <p className="text-lg">Moves: {moves}</p>
           <button
             onClick={initializeGame}
@@ -85,7 +114,7 @@ const MemoryGame = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className={`grid ${gridColumns[difficulty]} gap-4`}>
         {cards.map((card) => (
           <div
             key={card.uniqueId}
@@ -131,9 +160,9 @@ const MemoryGame = () => {
           </div>
         ))}
       </div>
-
-      <div>
-        <p className='text-center mt-10'>made by rayhan</p>
+      
+      <div className='text-center pt-10'>
+        <p>made by rayhan</p>
       </div>
 
       {/* Win Message */}
