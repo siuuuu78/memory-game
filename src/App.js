@@ -37,6 +37,7 @@ const MemoryGame = () => {
     return () => clearInterval(intervalId);
   }, [isGameStarted, isWon]);
 
+
   const initializeGame = useCallback(() => {
     const currentLevel = DIFFICULTY_LEVELS[difficulty];
     
@@ -56,6 +57,10 @@ const MemoryGame = () => {
     setTimeElapsed(0);
     setIsGameStarted(false);
   }, [difficulty]);
+
+  useEffect(() => {
+    initializeGame(); 
+  }, [initializeGame]);
 
   const handleCardClick = (clickedCard) => {
     if (!isGameStarted) setIsGameStarted(true);
