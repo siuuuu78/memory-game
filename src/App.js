@@ -103,13 +103,13 @@ const MemoryGame = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 flex">
+    <div className="container max-w-6xl mx-auto p-4 flex">
     <div className="w-2/3 pr-4">
       {/* Existing game component */}
-      <div className="text-center mb-6">
+      <div className="main-content text-center mb-6">
         <h1 className="text-3xl font-bold mb-4">Memory Game</h1>
         
-        <div className="flex justify-center gap-4 mb-4">
+        <div className="control flex justify-center gap-4 mb-4">
           <select 
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
@@ -132,7 +132,7 @@ const MemoryGame = () => {
           </button>
         </div>
       </div>
-        {/* Header dan Select */}
+       
         {/* Grid Cards */}
         <div className={`grid ${gridColumns[difficulty]} gap-4`}>
         {cards.map((card) => (
@@ -183,7 +183,7 @@ const MemoryGame = () => {
 
         {/* Win Message */}
       </div>
-      <div className="w-1/3">
+      <div className="leaderboard w-1/3">
         {isWon && (
           <Leaderboard
             moves={moves}
